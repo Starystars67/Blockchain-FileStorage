@@ -1,0 +1,45 @@
+{
+  "name": "containerised-blockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dist": "electron-builder",
+    "pack": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Starystars67/Containerised-Blockchain.git"
+  },
+  "author": "Mitch Durso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Starystars67/Containerised-Blockchain/issues"
+  },
+  "homepage": "https://github.com/Starystars67/Containerised-Blockchain#readme",
+  "dependencies": {
+    "axios": "^0.21.2",
+    "bcrypt": "^3.0.6",
+    "bootstrap": "^4.3.1",
+    "chalk": "^2.4.2",
+    "express": "^4.17.1",
+    "jquery": "^3.4.1",
+    "minimist": "^1.2.0",
+    "popper.js": "^1.15.0",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "electron": "^11.5.0",
+    "electron-builder": "^22.10.5",
+    "electron-builder-squirrel-windows": "^22.10.5"
+  },
+  "build": {
+    "npmRebuild": false,
+    "appId": "uk.co.yourthought.files",
+    "win": {
+      "target": "zip"
+    }
+  }
+}

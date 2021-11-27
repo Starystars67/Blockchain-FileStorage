@@ -1,0 +1,14 @@
+{
+  "ui": true,
+  "Port": "4058",
+  "Type": "Host",
+  "FTP": {
+    "Host": "127.0.0.1",
+    "User": "master",
+    "Password": "quavers"
+  },
+  "Nodes": [
+    {"Name": "DC1 - Helsinki (S1)", "IP": "95.216.35.232", "PORT": "4058"},
+    {"Name": "DC4 - Helsinki (S2)", "IP": "95.217.57.245", "PORT": "4058"}
+  ]
+}

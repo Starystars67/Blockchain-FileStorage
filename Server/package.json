@@ -1,0 +1,36 @@
+{
+  "name": "containerised-blockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "new.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Starystars67/Containerised-Blockchain.git"
+  },
+  "author": "Mitch Durso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Starystars67/Containerised-Blockchain/issues"
+  },
+  "homepage": "https://github.com/Starystars67/Containerised-Blockchain#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "chalk": "^2.4.2",
+    "crypto-js": "^4.0.0",
+    "express": "^4.17.1",
+    "external-ip": "^2.1.1",
+    "minimist": "^1.2.0",
+    "moment": "^2.28.0",
+    "multer": "^1.4.2",
+    "p2p": "^0.10.2",
+    "shortid": "^2.2.15",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "electron": "^11.5.0"
+  }
+}

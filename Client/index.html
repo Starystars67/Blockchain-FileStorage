@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World!</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header id="titlebar">
+      <div id="drag-region">
+        <div id="window-title">
+          <span id="window-title-text">Secure Storage - Login</span>
+        </div>
+
+        <div id="window-controls">
+          <div class="button" id="min-button">
+            <span>&#xE921;</span>
+          </div>
+          <div class="button" id="max-button">
+            <span>&#xE922;</span>
+          </div>
+          <div class="button" id="restore-button">
+            <span>&#xE923;</span>
+          </div>
+          <div class="button" id="close-button">
+            <span>&#xE8BB;</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loadingModalTitle" style="color:black;">Generating Key Pair</h5>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <center>
+              <img src="loader.gif" width="128" height="128"/>
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Gen Modal -->
+    <div class="modal fade" id="keygenModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Key Pair Generation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <form>
+              <div class="form-group">
+                <label for="passphrase">Key Passphrase</label>
+                <input type="text" class="form-control" id="passphrase" aria-describedby="passphraseHelp" placeholder="Passphrase">
+                <small id="passphraseHelp" class="form-text text-muted">This should be something unique, we do not recommend sharing this with anyone.</small>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="GenKeys">Generate!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Confirm Before Upload Modal -->
+    <div class="modal fade" id="finalStepsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Secure File Storage - Final Confirm</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <form>
+              <div class="form-group">
+                <label for="fileChunks">File Break-up Amount</label>
+                <select class="form-control" id="fileChunks">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="FinalSubmit">Upload!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Success Modal -->
+    <div class="modal fade" id="uploadSuccessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Upload Successful</h5>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <center>
+              <span>Your Unique File ID: <span id="fileID"></span></span>
+              <p style="color:black;">
+                You should save the ID <code id="fileID"></code> somewhere safe as you will require this to be able to retreive or remove it.
+                You will also require the password you entered.
+              </p>
+            </center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manage Uploaded File Modal -->
+    <div class="modal fade" id="manageResultsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Manage Uploaded File</h5>
+          </div>
+          <div class="modal-body" style="color:black;">
+            Please use the buttons below as an action.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" id="DELETE-FILE">Delete</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="DOWNLOAD-FILE">Download</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="ModalCancelButton_1">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm File Deletion Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Are you sure?</h5>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <center>
+              <span style="color: black" id="deleteTextSpan">Are you sure you want to delete this file? This is a permanent action!</span>
+            </center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" id="DELETE-FILE-CONFIRM">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Error</h5>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <center>
+              <span style="color: black" id="errorSpan"></span>
+            </center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel" style="color:black;">Success!</h5>
+          </div>
+          <div class="modal-body" style="color:black;">
+            <center>
+              <span style="color: black" id="successSpan"></span>
+            </center>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="main">
+      <div id="page-login" style="display: none;">
+
+      </div>
+      <div class="page" id="page-select">
+        <div class="container">
+          <button type="button" id="UploadPage" style="" class="btn btn-success btn-lg btn-block">Upload Page</button>
+          <button type="button" id="DownloadPage" style="" class="btn btn-success btn-lg btn-block">File Management Page</button>
+          <div class="helper-text"  style="margin-top: 50px;">
+            <span>By using the system you accept all responsibility for your private key and password. Without them, nobody can recover the files that you upload to here.</span>
+            </br>
+            <span>No keys? Click <a href="javascript:showkeygen();">here</a> to generate and save your own.</span>
+          </div>
+        </div>
+      </div>
+      <div class="page" id="page-download" style="display: none;">
+        <div class="container">
+          <h5 class="modal-title" id="exampleModalLabel" style="color:white;">Manage Uploaded File</h5>
+          <form>
+            <div class="form-group">
+              <label for="passphrase">Security Password</label>
+              <input type="text" class="form-control" id="filePassword" aria-describedby="passphraseHelp" placeholder="Passphrase" value="123">
+              <small id="passphraseHelp" class="form-text text-muted">This is the password entered when uploading.</small>
+            </div>
+            <div class="form-group">
+              <label for="passphrase">File ID</label>
+              <!--value="aP9m4-rV4w"-->
+              <input type="text" class="form-control" id="fileIDToFind" aria-describedby="fileIDhelp" placeholder="File ID">
+              <small id="fileIDhelp" class="form-text text-muted">This is the ID that was displayed after successful upload.</small>
+            </div>
+            <div class="form-group">
+              <label for="passphrase">Private Key PassPhrase</label>
+              <input type="text" class="form-control" id="PrivateKeyPassPhrase" aria-describedby="passphraseHelp" placeholder="Passphrase" value="123">
+              <small id="PrivateKeyPassPhraseHelp" class="form-text text-muted">This is the passphrase that you entered when creating your key pair.</small>
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" id="privateKeyText" disabled class="form-control" placeholder="Select private key."aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="button" id="privateKeyButton">Select...</button>
+              </div>
+            </div>
+          </form>
+          <button type="button" class="btn btn-primary" id="FINDFile">Find</button>
+          <button type="button" class="btn btn-secondary BackToMainMenu">Back to Menu</button>
+        </div>
+      </div>
+      <div class="page" id="page-upload" style="display: none;">
+        <div class="container">
+          <form>
+            <div class="form-group">
+              <input type="password" class="form-control" id="encryptionPassword" placeholder="Security Password">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" id="publicKeyText" disabled class="form-control" placeholder="Select public key."aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="button" id="publicKeyButton">Select...</button>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" id="uploadFileText" disabled class="form-control" placeholder="Select file to upload."aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="button" id="uploadFileButton">Select...</button>
+              </div>
+            </div>
+            <button type="button" id="UploadData" style="display:none;" class="btn btn-success btn-lg btn-block">Upload!</button>
+          </form>
+          <button type="button" class="btn btn-secondary BackToMainMenu">Back to Menu</button>
+
+          <div class="helper-text">
+            <span>By using the system you accept all responsibility for your private key and password. Without them, nobody can recover the files that you upload to here.</span>
+            </br>
+            <span>No keys? Click <a href="javascript:showkeygen();">here</a> to generate and save your own.</span>
+            </br>
+            <span>File already uploaded? Click <a href="javascript:retreiveFile();">here</a> to manage.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- You can also require other files to run in this process -->
+    <script>let $ = require('jquery');</script>
+    <script>require('popper.js');</script>
+    <script>require('bootstrap');</script>
+    <script src="./renderer.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
